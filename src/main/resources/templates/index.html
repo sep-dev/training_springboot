@@ -10,7 +10,18 @@
             <tr th:each="emp : ${emplist}" th:object="${emp}">
                 <td th:text="*{id}"></td>
                 <td th:text="*{empname}"></td>
+                <td>
+		            <form th:action="@{/emp/{id}/delete(id=*{id})}" th:method="delete">
+		                <input type="submit" value="削除" />
+		            </form>
+                </td>
             </tr>
         </table>
+
+		<form action="#" th:action="@{/emp/regist}" th:object="${new_emp}" method="post">
+		    <p><input type="text" th:field="*{empname}" /></p>
+		    <p><input type="submit" value="追加" /> <input type="reset" value="クリア" /></p>
+		</form>
+		
     </body>
 </html>
