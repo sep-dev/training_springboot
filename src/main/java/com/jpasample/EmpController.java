@@ -44,6 +44,16 @@ public class EmpController {
         return "redirect:/emp";
     }
 
+    // URLパス上の id に一致する Employee データを更新
+    @RequestMapping(value="/emp/{id}/update", method=RequestMethod.POST)
+    public String update(@PathVariable Long id, @ModelAttribute Employee employee, Model model) {
+
+    	employee.setId(id);
+    	empRepository.save(employee);
+
+        return "redirect:/emp";
+    }
+
     // URLパス上の id に一致する Employee データを削除
     @RequestMapping(value="/emp/{id}/delete", method=RequestMethod.DELETE)
     public String delete(@PathVariable Long id, Model model) {
@@ -51,6 +61,16 @@ public class EmpController {
     	empRepository.deleteById(id);
 
         return "redirect:/emp";
+    }
+
+    // URLパス上の id に一致する Employee データを取得
+    @RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
+    public String detail(@PathVariable Long id, Model model) {
+    	
+    	Employee employee = empRepository.getOne(id);
+    	model.addAttribute("emp", employee);
+
+        return "detail";
     }
     
 }
