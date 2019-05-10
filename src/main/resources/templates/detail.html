@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Springboot Sample</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+    	<div class="container">
+	        <h1>社員詳細</h1>
+			<form action="#" th:action="@{/emp/{id}/update(id=*{id})}" th:object="${emp}" method="post">
+	        	<input type="text" th:field="${emp.empname}" />
+		    	<input class="btn btn-default" type="submit" value="更新" />
+	        </form>
+	        <br/>
+	        <a class="btn btn-default" href="/emp">戻る</a>
+		</div>
+    </body>
+</html>
