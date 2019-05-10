@@ -8,6 +8,7 @@
     </head>
     <body>
     	<div class="container">
+    	
 	        <h1 th:text="${title}"></h1>
 	        <table class="table">
 	            <tr th:each="emp : ${emplist}" th:object="${emp}">
@@ -22,9 +23,9 @@
 	            </tr>
 	        </table>
 
-			<form action="#" th:action="@{/emp/regist}" th:object="${new_emp}" method="post">
+			<form action="#" th:action="@{/emp/create}" th:object="${new_emp}" method="post">
 			    <p><input type="text" th:field="*{empname}" /></p>
-			    <p><input class="btn btn-default" type="submit" value="追加" /> <input class="btn btn-default" type="reset" value="クリア" /></p>
+			    <p><input class="btn btn-default" type="submit" value="追加" /></p>
 			</form>
 
 		</div>

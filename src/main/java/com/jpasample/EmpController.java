@@ -34,9 +34,19 @@ public class EmpController {
         return "index";
     }
 
+    // 社員詳細
+    @RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
+    public String detail(@PathVariable Long id, Model model) {
+    	
+    	Employee employee = empRepository.getOne(id);
+    	model.addAttribute("emp", employee);
+
+        return "detail";
+    }
+
 	// 新規登録処理。画面入力 empname をセットした Employee オブジェクトを EmployeeRepository に渡し新規追加
-    @RequestMapping(value="/emp/regist", method=RequestMethod.POST)
-    public String regist(@ModelAttribute Employee new_employee, Model model) {
+    @RequestMapping(value="/emp/create", method=RequestMethod.POST)
+    public String create(@ModelAttribute Employee new_employee, Model model) {
 
     	empRepository.save(new_employee);
 
@@ -61,16 +71,6 @@ public class EmpController {
     	empRepository.deleteById(id);
 
         return "redirect:/emp";
-    }
-
-    // URLパス上の id に一致する Employee データを取得
-    @RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
-    public String detail(@PathVariable Long id, Model model) {
-    	
-    	Employee employee = empRepository.getOne(id);
-    	model.addAttribute("emp", employee);
-
-        return "detail";
     }
     
 }

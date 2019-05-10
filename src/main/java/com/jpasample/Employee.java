@@ -15,16 +15,21 @@ public class Employee {
     @Column(name="empno")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+
     private String empname;
+    
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getEmpname() {
         return empname;
     }
+
     public void setEmpname(String empname) {
         this.empname = empname;
     }
