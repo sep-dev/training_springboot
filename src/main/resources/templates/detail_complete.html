@@ -10,17 +10,10 @@
     	<div class="container">
 	        <h1>社員詳細</h1>
 			<hr class="style-one">
-		    <ul>
-		        <li th:each="error : ${errors}" class="text-danger">
-		            <span th:text="${error.getDefaultMessage()}">Error message</span>
-		        </li>
-		    </ul>
-			<form action="#" th:action="@{/emp/{id}/update(id=*{id})}" th:object="${emp}" method="post">
-	        	<input type="text" th:field="${emp.empname}" />
-		    	<input class="btn btn-default" type="submit" value="更新" />
-	        </form>
-	        <br/>
-	        <a class="btn btn-default" href="/emp">戻る</a>
+            <span th:text="${empname}"></span>を更新しました。
+            <br/>
+            <br/>
+	        <a class="btn btn-default" href="/emp">社員一覧</a>
 		</div>
     </body>
 </html>

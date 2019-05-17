@@ -1,29 +1,39 @@
 package com.jpasample;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-// インタフェース EmployeeRepository でデータを取得し、HTMLテンプレート（ビュー）に出力するコントローラクラス
+/**
+ * コントローラクラス
+ */
 @Controller
 public class EmpController {
 	@Autowired
-	EmployeeRepository empRepository;
+	EmployeeService empService;
     
+	/**
+	 * ページング単位の社員一覧出力メソッド。
+	 * @param model
+	 * @param pageable
+	 * @return
+	 */
 	@RequestMapping(value = "/emp", method = RequestMethod.GET)
-    public String index(Model model) {
+    public String index(Model model, Pageable pageable) {
 		
-		// html テンプレート上 ${変数名}にセットされる。
-        model.addAttribute("title", "社員リスト");
-
-        // 既に存在するEmployeeデータ取得
-        List<Employee> empList=empRepository.findAll();
-    	model.addAttribute("emplist", empList);
+        // ページング単位で社員データ一覧を取得。
+        Page<Employee> empPage = empService.getAll(pageable);
+        model.addAttribute("page", empPage);
+        model.addAttribute("emplist", empPage.getContent());
+        model.addAttribute("url", "/emp");
 
     	// 新規登録用Employee
     	Employee new_employee = new Employee();
@@ -34,41 +44,83 @@ public class EmpController {
         return "index";
     }
 
-    // 社員詳細
+    /**
+     * 社員詳細出力メソッド。
+     * @param id
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
     public String detail(@PathVariable Long id, Model model) {
     	
-    	Employee employee = empRepository.getOne(id);
+    	Employee employee = empService.getOne(id);
     	model.addAttribute("emp", employee);
 
         return "detail";
     }
 
-	// 新規登録処理。画面入力 empname をセットした Employee オブジェクトを EmployeeRepository に渡し新規追加
+    /**
+     * 社員データ新規登録メソッド。
+     * @param new_employee
+     * @param result
+     * @param model
+     * @param pageable
+     * @return
+     */
     @RequestMapping(value="/emp/create", method=RequestMethod.POST)
-    public String create(@ModelAttribute Employee new_employee, Model model) {
+    public String create(@ModelAttribute @Validated Employee new_employee, BindingResult result, Model model, Pageable pageable) {
 
-    	empRepository.save(new_employee);
+    	// 入力エラー時、エラーメッセージ出力
+    	if (result.hasErrors()) {
+    		model.addAttribute("errors", result.getAllErrors());
+
+        	return index(model, pageable);
+    	}
+    	
+    	empService.save(new_employee);
 
     	// 登録後社員一覧にリダイレクト
         return "redirect:/emp";
     }
 
-    // URLパス上の id に一致する Employee データを更新
+    /**
+     * 社員データ更新メソッド。
+     * @param id
+     * @param employee
+     * @param result
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/emp/{id}/update", method=RequestMethod.POST)
-    public String update(@PathVariable Long id, @ModelAttribute Employee employee, Model model) {
+    public String update(@PathVariable Long id, @ModelAttribute @Validated Employee employee, BindingResult result, Model model) {
 
+    	// 入力エラー時、エラーメッセージ出力
+    	if (result.hasErrors()) {
+    		model.addAttribute("errors", result.getAllErrors());
+        	model.addAttribute("emp", employee);
+
+            return "detail";
+    	}
+    	
     	employee.setId(id);
-    	empRepository.save(employee);
+    	empService.save(employee);
 
-        return "redirect:/emp";
+    	// 更新した社員名を完了ページに出力。
+    	model.addAttribute("empname", employee.getEmpname());
+
+        return "detail_complete";
     }
 
-    // URLパス上の id に一致する Employee データを削除
+    /**
+     * 社員データ削除メソッド。
+     * @param id
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/emp/{id}/delete", method=RequestMethod.DELETE)
     public String delete(@PathVariable Long id, Model model) {
     	
-    	empRepository.deleteById(id);
+    	empService.delete(id);
 
         return "redirect:/emp";
     }

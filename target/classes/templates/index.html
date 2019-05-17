@@ -5,27 +5,60 @@
         <meta charset="utf-8" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script th:src="@{/js/main.js}"></script>
     </head>
     <body>
     	<div class="container">
     	
-	        <h1 th:text="${title}"></h1>
+	        <h1>社員リスト</h1>
 	        <table class="table">
+	        	<tr>
+	        		<th>ID</th>
+	        		<th>社員名</th>
+	        		<th style="width: 200px"></th>
+	        	</tr>
 	            <tr th:each="emp : ${emplist}" th:object="${emp}">
 	                <td th:text="*{id}"></td>
 	                <td th:text="*{empname}"></td>
 	                <td>
 			            <form th:action="@{/emp/{id}/delete(id=*{id})}" th:method="delete">
-						<a class="btn btn-default" th:href="@{/emp/{id}(id=*{id})}">詳細</a>
-			                <input class="btn btn-default" type="submit" value="削除" />
+							<a class="btn btn-default" th:href="@{/emp/{id}(id=*{id})}">詳細</a>
+			                <input class="btn btn-default" type="submit" value="削除" 
+			                	th:onclick="return deleteConfirm();" />
 			            </form>
 	                </td>
 	            </tr>
 	        </table>
 
+	        <div class="text-center">
+	            <ul class="pagination">
+	                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+	                    <span th:if="${page.first}">&laquo;</span>
+	                    <a th:if="${not page.first}" th:href="@{${url}(page=(${page.number}-1))}">&laquo;</a>
+	                </li>
+	                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
+	                    <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+	                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+	                        <span th:text='${i+1}'>1</span>
+	                    </a>
+	                </li>
+	                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+	                    <span th:if="${page.last}">&raquo;</span>
+	                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.number}+1))}">&raquo;</a>
+	                </li>
+	            </ul>
+	        </div>
+	        
+			<hr class="style-one">
+
+		    <ul>
+		        <li th:each="error : ${errors}" class="text-danger">
+		            <span th:text="${error.getDefaultMessage()}">Error message</span>
+		        </li>
+		    </ul>
 			<form action="#" th:action="@{/emp/create}" th:object="${new_emp}" method="post">
-			    <p><input type="text" th:field="*{empname}" /></p>
-			    <p><input class="btn btn-default" type="submit" value="追加" /></p>
+			    <p><input type="text" th:field="*{empname}" placeholder="社員名を入力" style="width: 300px;" ></p>
+			    <p><input class="btn btn-default" type="submit" value="追加" ></p>
 			</form>
 
 		</div>
