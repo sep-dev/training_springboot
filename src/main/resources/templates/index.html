@@ -11,6 +11,12 @@
     	<div class="container">
     	
 	        <h1>社員リスト</h1>
+
+			<form action="#" th:action="@{/emp}" method="post">
+			    <p><input type="text" name="searchname" placeholder="検索する社員名を入力" style="width: 300px;" ></p>
+			    <p><input class="btn btn-default" type="submit" value="検索" ></p>
+			</form>
+
 	        <table class="table">
 	        	<tr>
 	        		<th>ID</th>

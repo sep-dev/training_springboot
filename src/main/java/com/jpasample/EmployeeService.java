@@ -1,6 +1,10 @@
 package com.jpasample;
 
+import java.util.Collections;
+import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +29,45 @@ public class EmployeeService {
     }
     
     /**
+     * 社員名検索で社員一覧を取得。
+     * @param searchname
+     * @param pageable
+     * @return
+     */
+    public Page<Employee> getSearch(String searchname, Pageable pageable) {
+
+    	// 検索で取得した社員Listをページング対応するためPageオブジェクトに変換。
+        List<Employee> searchList = empRepo.findEmployee(searchname);
+
+        // Pageableからページのサイズ、現在ページなどを
+		List<Employee> empList;
+		int pageSize = pageable.getPageSize();
+		int currentPage = pageable.getPageNumber();
+		int startItem = currentPage * pageSize;
+
+		if (searchList.size() < startItem) {
+            empList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, searchList.size());
+            empList = searchList.subList(startItem, toIndex);
+        }
+
+        return 
+        	new PageImpl<Employee>(empList, PageRequest.of(currentPage, pageSize), searchList.size());
+    }
+    
+    /**
      * 特定の社員データを取得。
      * @param id
      * @return
      */
     public Employee getOne(Long id) {
-    	return empRepo.getOne(id);
+    	Employee emp = empRepo.getOne(id);
+    	if (emp == null) {
+    		// 社員データが取得できなかった際のエラー処理
+    	}
+    	
+    	return emp;
     }
 
     /**

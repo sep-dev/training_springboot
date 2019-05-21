@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * コントローラクラス
@@ -42,6 +43,29 @@ public class EmpController {
         // src/main/resources/templates/ 下の HTML を出力。
         // この場合は index.html となる。
         return "index";
+    }
+
+	/**
+	 * 検索社員一覧出力メソッド。
+	 * POSTされた検索文字列入力内容 searchname を元に、社員一覧を部分一致検索で取得し返却する。
+	 * @param searchname
+	 * @param model
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "/emp", method = RequestMethod.POST)
+    public String search(@RequestParam String searchname, Model model, Pageable pageable) {
+		
+		Page<Employee> empPage = empService.getSearch(searchname, pageable);
+        model.addAttribute("page", empPage);
+        model.addAttribute("emplist", empPage.getContent());
+        model.addAttribute("url", "/emp");
+
+    	// 新規登録用Employee
+    	Employee new_employee = new Employee();
+    	model.addAttribute("new_emp", new_employee);
+
+    	return "index";
     }
 
     /**
