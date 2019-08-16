@@ -1,5 +1,6 @@
 package com.jpasample;
 
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,11 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * コントローラクラス
@@ -25,16 +26,23 @@ public class EmpController {
 	 * ページング単位の社員一覧出力メソッド。
 	 * @param model
 	 * @param pageable
+	 * @param search
 	 * @return
 	 */
-	@RequestMapping(value = "/emp", method = RequestMethod.GET)
-    public String index(Model model, Pageable pageable) {
+	@GetMapping(value = "/emp")
+    public String index(Model model, Pageable pageable, String search) {
+
+		if (Objects.isNull(search)) {
+			search = "";
+		}
+
+		String query = !search.equals("") ? "?search=" + search : "";
 		
         // ページング単位で社員データ一覧を取得。
-        Page<Employee> empPage = empService.getAll(pageable);
+        Page<Employee> empPage = empService.getSearch(search, pageable);
         model.addAttribute("page", empPage);
         model.addAttribute("emplist", empPage.getContent());
-        model.addAttribute("url", "/emp");
+        model.addAttribute("url", "/emp" + query);
 
     	// 新規登録用Employee
     	Employee new_employee = new Employee();
@@ -47,19 +55,23 @@ public class EmpController {
 
 	/**
 	 * 検索社員一覧出力メソッド。
-	 * POSTされた検索文字列入力内容 searchname を元に、社員一覧を部分一致検索で取得し返却する。
-	 * @param searchname
+	 * POSTされた検索文字列入力内容 search を元に、社員一覧を部分一致検索で取得し返却する。
 	 * @param model
 	 * @param pageable
+	 * @param search
 	 * @return
 	 */
-	@RequestMapping(value = "/emp", method = RequestMethod.POST)
-    public String search(@RequestParam String searchname, Model model, Pageable pageable) {
+	@PostMapping(value = "/emp")
+    public String search(Model model, Pageable pageable, String search) {
 		
-		Page<Employee> empPage = empService.getSearch(searchname, pageable);
+		if (Objects.isNull(search)) {
+			search = "";
+		}
+
+		Page<Employee> empPage = empService.getSearch(search, pageable);
         model.addAttribute("page", empPage);
         model.addAttribute("emplist", empPage.getContent());
-        model.addAttribute("url", "/emp");
+        model.addAttribute("url", "/emp?search=" + search);
 
     	// 新規登録用Employee
     	Employee new_employee = new Employee();
@@ -74,7 +86,7 @@ public class EmpController {
      * @param model
      * @return
      */
-    @RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
+    @GetMapping(value="/emp/{id}")
     public String detail(@PathVariable Long id, Model model) {
     	
     	Employee employee = empService.getOne(id);
@@ -91,20 +103,44 @@ public class EmpController {
      * @param pageable
      * @return
      */
-    @RequestMapping(value="/emp/create", method=RequestMethod.POST)
+    @PostMapping(value="/emp/create")
     public String create(@ModelAttribute @Validated Employee new_employee, BindingResult result, Model model, Pageable pageable) {
 
     	// 入力エラー時、エラーメッセージ出力
     	if (result.hasErrors()) {
     		model.addAttribute("errors", result.getAllErrors());
 
-        	return index(model, pageable);
+        	return index(model, pageable, "");
     	}
     	
     	empService.save(new_employee);
 
     	// 登録後社員一覧にリダイレクト
         return "redirect:/emp";
+    }
+
+    /**
+     * 社員データ編集確認メソッド。
+     * @param id
+     * @param employee
+     * @param result
+     * @param model
+     * @return
+     */
+    @PostMapping(value="/emp/{id}/confirm")
+    public String confirm(@PathVariable Long id, @ModelAttribute @Validated Employee employee, BindingResult result, Model model) {
+
+    	// 入力エラー時、エラーメッセージ出力
+    	if (result.hasErrors()) {
+    		model.addAttribute("errors", result.getAllErrors());
+        	model.addAttribute("emp", employee);
+
+            return "detail";
+    	}
+    	
+    	model.addAttribute("emp", employee);
+
+        return "detail_confirm";
     }
 
     /**
@@ -115,22 +151,13 @@ public class EmpController {
      * @param model
      * @return
      */
-    @RequestMapping(value="/emp/{id}/update", method=RequestMethod.POST)
-    public String update(@PathVariable Long id, @ModelAttribute @Validated Employee employee, BindingResult result, Model model) {
+    @PostMapping(value="/emp/{id}/update")
+    public String update(@PathVariable Long id, @ModelAttribute Employee employee, BindingResult result, Model model) {
 
-    	// 入力エラー時、エラーメッセージ出力
-    	if (result.hasErrors()) {
-    		model.addAttribute("errors", result.getAllErrors());
-        	model.addAttribute("emp", employee);
-
-            return "detail";
-    	}
-    	
     	employee.setId(id);
     	empService.save(employee);
 
-    	// 更新した社員名を完了ページに出力。
-    	model.addAttribute("empname", employee.getEmpname());
+    	model.addAttribute("emp_name", employee.getName());
 
         return "detail_complete";
     }
@@ -141,7 +168,7 @@ public class EmpController {
      * @param model
      * @return
      */
-    @RequestMapping(value="/emp/{id}/delete", method=RequestMethod.DELETE)
+    @DeleteMapping(value="/emp/{id}/delete")
     public String delete(@PathVariable Long id, Model model) {
     	
     	empService.delete(id);

@@ -1,7 +1,10 @@
 package com.jpasample;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +27,7 @@ public class EmployeeService {
      * @param pageable
      * @return
      */
-    public Page<Employee> getAll(Pageable pageable) {
+    private Page<Employee> getAll(Pageable pageable) {
         return empRepo.findAll(pageable);
     }
     
@@ -36,10 +39,15 @@ public class EmployeeService {
      */
     public Page<Employee> getSearch(String searchname, Pageable pageable) {
 
+    	// 検索ワードが無い場合は全件対象
+    	if (searchname.equals("")) {
+    		return getAll(pageable);
+    	}
+    	
     	// 検索で取得した社員Listをページング対応するためPageオブジェクトに変換。
         List<Employee> searchList = empRepo.findEmployee(searchname);
 
-        // Pageableからページのサイズ、現在ページなどを
+        // 現在のページに該当する社員Listを取得
 		List<Employee> empList;
 		int pageSize = pageable.getPageSize();
 		int currentPage = pageable.getPageNumber();

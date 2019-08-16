@@ -15,12 +15,25 @@
 		            <span th:text="${error.getDefaultMessage()}">Error message</span>
 		        </li>
 		    </ul>
-			<form action="#" th:action="@{/emp/{id}/update(id=*{id})}" th:object="${emp}" method="post">
-	        	<input type="text" th:field="${emp.empname}" />
-		    	<input class="btn btn-default" type="submit" value="更新" />
+			<form id="update_form" class="form-group" action="#" 
+				th:action="@{/emp/{id}/confirm(id=*{id})}" th:object="${emp}" method="post">
+				<table>
+					<tbody>
+						<tr>
+							<th class="col-md-4">社員名</th>
+							<td><input type="text" th:field="${emp.name}" /></td>
+						</tr>
+						<tr>
+							<th class="col-md-4">電話番号</th>
+							<td><input type="text" th:field="${emp.tel}" /></td>
+						</tr>
+					</tbody>
+	        	</table>
 	        </form>
-	        <br/>
-	        <a class="btn btn-default" href="/emp">戻る</a>
+		    <div class="form-group">
+		    	<input class="btn btn-default" type="submit" value="確認" form="update_form" />
+		        <a class="btn btn-default" href="/emp">戻る</a>
+		    </div>
 		</div>
     </body>
 </html>

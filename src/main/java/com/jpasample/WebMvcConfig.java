@@ -15,12 +15,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	/**
-	 * ページングクラスにデフォルト5件でページング指定を追加。
+	 * 一覧でのページング単位で何件表示するかの定数。
+	 */
+	private static int NUMBER_PER_PAGE = 10;
+	
+	/**
+	 * ページングクラスに規定件数でページング指定を追加。
 	 */
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();
-		resolver.setFallbackPageable(PageRequest.of(0, 5));
+		resolver.setFallbackPageable(PageRequest.of(0, NUMBER_PER_PAGE));
 		argumentResolvers.add(resolver);
 	}
 

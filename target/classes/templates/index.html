@@ -13,7 +13,7 @@
 	        <h1>社員リスト</h1>
 
 			<form action="#" th:action="@{/emp}" method="post">
-			    <p><input type="text" name="searchname" placeholder="検索する社員名を入力" style="width: 300px;" ></p>
+			    <p><input type="text" name="search" placeholder="検索する社員名を入力" style="width: 300px;" ></p>
 			    <p><input class="btn btn-default" type="submit" value="検索" ></p>
 			</form>
 
@@ -21,11 +21,13 @@
 	        	<tr>
 	        		<th>ID</th>
 	        		<th>社員名</th>
+	        		<th>電話番号</th>
 	        		<th style="width: 200px"></th>
 	        	</tr>
 	            <tr th:each="emp : ${emplist}" th:object="${emp}">
 	                <td th:text="*{id}"></td>
-	                <td th:text="*{empname}"></td>
+	                <td th:text="*{name}"></td>
+	                <td th:text="*{tel}"></td>
 	                <td>
 			            <form th:action="@{/emp/{id}/delete(id=*{id})}" th:method="delete">
 							<a class="btn btn-default" th:href="@{/emp/{id}(id=*{id})}">詳細</a>
@@ -63,7 +65,8 @@
 		        </li>
 		    </ul>
 			<form action="#" th:action="@{/emp/create}" th:object="${new_emp}" method="post">
-			    <p><input type="text" th:field="*{empname}" placeholder="社員名を入力" style="width: 300px;" ></p>
+			    <p><input type="text" th:field="*{name}" placeholder="社員名を入力" style="width: 300px;" ></p>
+			    <p><input type="text" th:field="*{tel}" placeholder="電話番号を入力" style="width: 300px;" ></p>
 			    <p><input class="btn btn-default" type="submit" value="追加" ></p>
 			</form>
 

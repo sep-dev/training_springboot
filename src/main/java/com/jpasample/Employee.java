@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -17,15 +18,31 @@ import javax.validation.constraints.Size;
 @Table(name="employee")
 public class Employee {
 
+	/**
+	 * ID メンバ。
+	 */
 	@Id
     @Column(name="empno")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
+	/**
+	 * 社員名メンバ。
+	 * 必須かつ10文字以内であること。
+	 */
+	@Column(name="empname")
 	@NotEmpty(message = "社員名を入力してください。")
 	@Size(max = 10, message = "社員名は10文字以内で入力してください。")
-    private String empname;
+    private String name;
     
+	/**
+	 * 電話番号メンバ。
+	 * 空白、もしくは電話番号形式であること。
+	 */
+	@Pattern(regexp = "^(|0\\d{1,4}-\\d{1,4}-\\d{4})$", message = "電話番号の形式が正しくありません。半角数字（ハイフンあり）で入力してください。")
+	@Size(max = 20, message = "電話番号は20文字以内で入力してください。")
+	private String tel;
+	
     public Long getId() {
         return id;
     }
@@ -34,11 +51,19 @@ public class Employee {
         this.id = id;
     }
 
-    public String getEmpname() {
-        return empname;
+    public String getName() {
+        return name;
     }
 
-    public void setEmpname(String empname) {
-        this.empname = empname;
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getTel() {
+    	return tel;
+    }
+    
+    public void setTel(String tel) {
+    	this.tel = tel;
     }
 }
