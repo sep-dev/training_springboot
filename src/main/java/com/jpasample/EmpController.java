@@ -41,7 +41,6 @@ public class EmpController {
         // ページング単位で社員データ一覧を取得。
         Page<Employee> empPage = empService.getSearch(search, pageable);
         model.addAttribute("page", empPage);
-        model.addAttribute("emplist", empPage.getContent());
         model.addAttribute("url", "/emp" + query);
 
     	// 新規登録用Employee
@@ -70,7 +69,6 @@ public class EmpController {
 
 		Page<Employee> empPage = empService.getSearch(search, pageable);
         model.addAttribute("page", empPage);
-        model.addAttribute("emplist", empPage.getContent());
         model.addAttribute("url", "/emp?search=" + search);
 
     	// 新規登録用Employee

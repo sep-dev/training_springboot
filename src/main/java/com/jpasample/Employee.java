@@ -42,6 +42,11 @@ public class Employee {
 	@Pattern(regexp = "^(|0\\d{1,4}-\\d{1,4}-\\d{4})$", message = "電話番号の形式が正しくありません。半角数字（ハイフンあり）で入力してください。")
 	@Size(max = 20, message = "電話番号は20文字以内で入力してください。")
 	private String tel;
+
+	/**
+	 * 部署IDメンバ。
+	 */
+    private Long section_id;
 	
     public Long getId() {
         return id;
@@ -65,5 +70,13 @@ public class Employee {
     
     public void setTel(String tel) {
     	this.tel = tel;
+    }
+    
+    public Long getSection_id() {
+    	return section_id;
+    }
+    
+    public void setSection_id(Long section_id) {
+    	this.section_id = section_id;
     }
 }

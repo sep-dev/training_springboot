@@ -1,13 +1,8 @@
 package com.jpasample;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+//import org.springframework.data.domain.PageImpl;
+//import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +39,12 @@ public class EmployeeService {
     		return getAll(pageable);
     	}
     	
+        Page<Employee> searchList = empRepo.findEmployee(searchname, pageable);
+        return searchList;
+
+        /*
     	// 検索で取得した社員Listをページング対応するためPageオブジェクトに変換。
-        List<Employee> searchList = empRepo.findEmployee(searchname);
+        //List<Employee> searchList = empRepo.findEmployee(searchname);
 
         // 現在のページに該当する社員Listを取得
 		List<Employee> empList;
@@ -62,6 +61,7 @@ public class EmployeeService {
 
         return 
         	new PageImpl<Employee>(empList, PageRequest.of(currentPage, pageSize), searchList.size());
+    	*/
     }
     
     /**
